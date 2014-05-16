@@ -27,6 +27,7 @@ class PlayState extends FlxState {
 	var bonuses : FlxGroup;
 	var bricks : FlxGroup;
 	var mushrooms : FlxGroup;
+	var goombas : FlxGroup;
 	override public function create() {
 		super.create();
 		FlxG.log.redirectTraces = true;
@@ -53,6 +54,9 @@ class PlayState extends FlxState {
 		mushrooms = new FlxGroup();
 		add(mushrooms);
 		
+		goombas = new FlxGroup();
+		add(goombas);
+		
 		placeBoxes(Assets.getText("data/boxes.csv"));
 	}
 	public function hitBox(player : Player, box : Box) {
@@ -66,12 +70,26 @@ class PlayState extends FlxState {
 		FlxG.camera.flash();
 		mushrooms.remove(shroom);
 	}
+	public function actorHitWall(actor : Actor, a : FlxTilemap) {
+		actor.speed = -actor.speed;		
+	}
+	public function actorHitActor(a1 : Actor, a2 : Actor) {
+		a1.speed = -a1.speed;
+		a2.speed = -a2.speed;
+	}
+	public function playerHitActor(player : Player, actor : Actor){
+		if (actor.isTouching(FlxObject.CEILING)) {
+			actor.animation.play("die");
+			player.velocity.y = -200;
+			goombas.remove(actor);
+		}
+	}
 	override public function update() {
 		super.update();
 		
 		//FlxG.camera.angle += 0.1;
 		
-		FlxG.camera.scroll.x +=1;
+		//FlxG.camera.scroll.x +=1;
 		
 		FlxG.collide(player, map);
 		FlxG.collide(player, bonuses, hitBox);
@@ -79,10 +97,11 @@ class PlayState extends FlxState {
 		FlxG.collide(mushrooms, bricks);
 		FlxG.collide(mushrooms, bonuses);
 		FlxG.collide(mushrooms, map);
+		FlxG.collide(player, goombas, playerHitActor);
+		FlxG.collide(goombas, map, actorHitWall);
 		FlxG.overlap(player, mushrooms, eatShroom);
-		if (FlxG.mouse.justPressed && player.isTouching(FlxObject.FLOOR)) {
-			player.velocity.y = -350;
-		}
+		FlxG.collide(goombas, goombas, actorHitActor);
+		
 		if (FlxG.keys.pressed.RIGHT) {
 			FlxG.camera.scroll.x += 10;
 		}
@@ -90,8 +109,8 @@ class PlayState extends FlxState {
 			FlxG.camera.scroll.x -= 11;
 		}
 		
-		if (FlxG.keys.justPressed.UP && player.isTouching(FlxObject.FLOOR)) {
-			player.velocity.y = -400;
+		if ((FlxG.keys.justPressed.UP || FlxG.mouse.justPressed) && player.isTouching(FlxObject.FLOOR)) {
+			player.velocity.y = -333;
 		}
 		
 		if ( (FlxG.keys.justReleased.UP || FlxG.mouse.justReleased) && player.velocity.y < 0) {
@@ -110,6 +129,9 @@ class PlayState extends FlxState {
 				}
 				if (Std.parseInt(coords[x]) == 126) {
 					bricks.add(new Brick(x*16, y*16)); 
+				}
+				if (Std.parseInt(coords[x]) == 128) {
+					goombas.add(new Goomba(x*16, y*16)); 
 				}
 			}
 				
