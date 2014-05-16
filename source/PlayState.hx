@@ -79,9 +79,8 @@ class PlayState extends FlxState {
 	}
 	public function playerHitActor(player : Player, actor : Actor){
 		if (actor.isTouching(FlxObject.CEILING)) {
-			actor.animation.play("die");
+			actor.die();
 			player.velocity.y = -200;
-			goombas.remove(actor);
 		}
 	}
 	override public function update() {

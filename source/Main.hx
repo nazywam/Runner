@@ -53,7 +53,7 @@ class Main extends Sprite
 	{
 		var stageWidth:Int = 256;
 		var stageHeight:Int = 224;
-
+		
 		/*if (zoom == -1)
 		{
 			var ratioX:Float = stageWidth / gameWidth;

@@ -19,5 +19,8 @@ class Actor extends FlxSprite {
 		super.update();
 		velocity.x = speed; 
 	}
+	public function die() {
+		
+	}
 	
 }
