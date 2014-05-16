@@ -8,11 +8,11 @@ import flixel.FlxObject;
 class Player extends FlxSprite {
 	
 	public var turnedRight : Bool;
-	public var crouching : Bool;
 	
 	public function new(x : Float, y : Float) {
 		super(x, y);
-		loadGraphic("images/player.png", false, 50, 50);
+		solid = true;
+		loadGraphic("images/player.png", false, 17, 16);
 		initAnimation();
 		animation.play("runRight");
 		turnedRight = true;
@@ -23,27 +23,18 @@ class Player extends FlxSprite {
 		
 	}
 	private function initAnimation() {
-		animation.add("standRight", [0]);
-		animation.add("standLeft", [1]);
-		animation.add("crouchRight", [2]);
-		animation.add("crouchLeft", [3]);
-		animation.add("jumpRight", [4]);
-		animation.add("jumpLeft", [5]);
-		animation.add("fallRight", [6]);
-		animation.add("fallLeft", [7]);
-		animation.add("runRight", [8, 9, 10, 11, 12, 13, 14 , 15], 10);
-		animation.add("runLeft", [16, 17, 18, 19, 20, 21, 21, 22, 23], 10);
+		animation.add("standRight", [6]);
+		animation.add("standLeft", [5]);
+		animation.add("jumpRight", [11]);
+		animation.add("jumpLeft", [0]);
+		animation.add("runRight", [7,8,9], 10);
+		animation.add("runLeft", [2, 3, 4], 10);
 	}
 	override public function update() {
 		
 		if (velocity.x == 0 && velocity.y == 0) {
-			if (crouching) {
-				if (turnedRight) animation.play("crouchRight");
-				else animation.play("crouchLeft");
-			} else {
-				if (turnedRight) animation.play("standRight");
-				else animation.play("standLeft");
-			}
+			if (turnedRight) animation.play("standRight");
+			else animation.play("standLeft");
 		}	
 		else if (!isTouching(FlxObject.FLOOR)) {
 			if (turnedRight) animation.play("jumpRight");
@@ -52,7 +43,7 @@ class Player extends FlxSprite {
 			if (turnedRight) animation.play("runRight");
 			else animation.play("runLeft");
 		}
-		
+		velocity.x = 70;
 		super.update();
 	}
 	

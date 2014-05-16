@@ -3,7 +3,7 @@
 	<!------------------------------APPLICATION SETTINGS---------------------------->
 	
 	<app title="Runner" file="Runner" main="Main" version="0.0.1" company="HaxeFlixel" />
-	
+		<android target-sdk-version="19" />
 	<!--The flixel preloader is not accurate in Chrome. You can use it regularly if you embed the swf into a html file
 	<!--or you can set the actual size of your file manually at "FlxPreloaderBase-onUpdate-bytesTotal"!-->
 	<app preloader="flixel.system.FlxPreloader" />
@@ -14,7 +14,7 @@
 	<!--------------------------------WINDOW SETTINGS------------------------------->
 	
 	<!--These window settings apply to all targets-->
-	<window width="500" height="500" fps="60" background="#FFFFFF" hardware="true" vsync="true" />
+	<window width="500" height="500" fps="30" background="#FFFFFF" hardware="true" vsync="true" />
 	
 	<!--Web-specific-->
 	<window if="web" orientation="portrait"  />
@@ -33,6 +33,7 @@
 	<classpath name="source" />
 	<assets path="assets" />
 	<assets path="assets/images" rename="images" />
+	<assets path="assets/data" rename="data" />
 	
 	<!--------------------------------LIBRARIES------------------------------------->
 

@@ -1,83 +1,118 @@
 package;
 
 import flash.Lib;
+import flixel.FlxCamera;
 import flixel.FlxG;
+import flixel.tile.FlxTile;
+import openfl.Assets;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.group.FlxGroup;
 import flixel.text.FlxText;
+import flixel.tile.FlxTilemap;
 import flixel.ui.FlxButton;
 import flixel.util.FlxMath;
 
 
+
 class PlayState extends FlxState {
 	
+	//16x14
+	
 	var player : Player;
+	var map : FlxTilemap;
+	var background : FlxSprite;
 	
-	var walls : FlxGroup;
-	
+	var bonuses : FlxGroup;
+	var bricks : FlxGroup;
+	var mushrooms : FlxGroup;
 	override public function create() {
 		super.create();
 		FlxG.log.redirectTraces = true;
+		FlxG.worldBounds.set(0, 0, 3392, 224);
 		
-		initWalls();
+		background = new FlxSprite();
+		background.loadGraphic("images/background.png");
+		add(background);
 		
+		map = new FlxTilemap();
+		map.loadMap(Assets.getText("data/map.txt"), "images/tiles.png", 16, 16, 0, 1);
+		add(map);
 		
-		player = new Player(100, 100);
+		player = new Player(60, 150);
 		add(player);
+		//FlxG.camera.follow(player);
+		
+		bonuses = new FlxGroup();
+		add(bonuses);
+		
+		bricks = new FlxGroup();
+		add(bricks);
+		
+		mushrooms = new FlxGroup();
+		add(mushrooms);
+		
+		placeBoxes(Assets.getText("data/boxes.csv"));
 	}
-	private function initWalls() {
-		walls = new FlxGroup();
-		add(walls);
-		var left = new FlxObject( -1, -1, 1, 500);
-		var top = new FlxObject( -1, -1, 500, 1);
-		var right = new FlxObject( 500, 0, 1, 500);
-		var down = new FlxObject( 0, 500, 500, 1);
-		walls.add(left);
-		walls.add(top);
-		walls.add(right);
-		walls.add(down);
-		for (x in walls) {
-			cast(x, FlxObject).immovable = true;
+	public function hitBox(player : Player, box : Box) {
+		if (box.animation.name != "used" && box.isTouching(FlxObject.FLOOR)) {
+			box.hit();			
 		}
-	}	
+	}
+	public function eatShroom(player : Player, shroom : Mushroom) {
+		FlxG.camera.shake();
+		FlxG.camera.angle = Std.random(10) - 5;
+		FlxG.camera.flash();
+		mushrooms.remove(shroom);
+	}
 	override public function update() {
 		super.update();
-		FlxG.collide(player, walls, hitWall);
-		if (FlxG.keys.justPressed.RIGHT) {
-			player.turnedRight = true;
-			player.crouching = false;
-		}
-		if (FlxG.keys.justPressed.LEFT) {
-			player.turnedRight = false;
-			player.crouching = false;
-		}
 		
-		if (FlxG.keys.justPressed.UP && player.isTouching(FlxObject.ANY)) {
-			player.velocity.y = -400;
-			player.crouching = false;
-		}
+		//FlxG.camera.angle += 0.1;
 		
-		if (!FlxG.keys.pressed.UP && player.velocity.y < 0) {
-			player.velocity.y = 0;
-		}
+		FlxG.camera.scroll.x +=1;
 		
-		if (FlxG.keys.pressed.LEFT) {
-			player.velocity.x = -125;
+		FlxG.collide(player, map);
+		FlxG.collide(player, bonuses, hitBox);
+		FlxG.collide(player, bricks, hitBox);
+		FlxG.collide(mushrooms, bricks);
+		FlxG.collide(mushrooms, bonuses);
+		FlxG.collide(mushrooms, map);
+		FlxG.overlap(player, mushrooms, eatShroom);
+		if (FlxG.mouse.justPressed && player.isTouching(FlxObject.FLOOR)) {
+			player.velocity.y = -350;
 		}
 		if (FlxG.keys.pressed.RIGHT) {
-			player.velocity.x = 125;
+			FlxG.camera.scroll.x += 10;
 		}
-		if (FlxG.keys.pressed.DOWN) {
-			player.crouching = true;
-		}
-		if (FlxG.keys.justReleased.DOWN) {
-			player.crouching = false;
+		if (FlxG.keys.pressed.LEFT) {
+			FlxG.camera.scroll.x -= 11;
 		}
 		
+		if (FlxG.keys.justPressed.UP && player.isTouching(FlxObject.FLOOR)) {
+			player.velocity.y = -400;
+		}
+		
+		if ( (FlxG.keys.justReleased.UP || FlxG.mouse.justReleased) && player.velocity.y < 0) {
+			player.velocity.y = 0;
+		}		
 	}
-	public function hitWall(player : Player, wall : FlxObject) {
+	public function placeBoxes(BoxData:String) {
+		var coords:Array<String>;
+		var entities:Array<String> = BoxData.split("\n");   
 		
+		for (y in 0...(entities.length)) {
+			coords = entities[y].split(",");  
+			for (x in 0...(coords.length)) {
+				if (Std.parseInt(coords[x]) == 141) {
+					bonuses.add(new Bonus(x*16, y*16, mushrooms)); 
+				}
+				if (Std.parseInt(coords[x]) == 126) {
+					bricks.add(new Brick(x*16, y*16)); 
+				}
+			}
+				
+		}
 	}
 }
