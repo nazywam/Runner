@@ -12,12 +12,14 @@ class Actor extends FlxSprite {
 	
 	public function new(x : Float, y : Float) {
 		super(x, y);
-		seen = false;
+		seen = true;
 		speed = 30;
 	}
 	override public function update() {
-		super.update();
-		velocity.x = speed; 
+		if (seen) {
+			super.update();
+			velocity.x = speed; 
+		}
 	}
 	public function die() {
 		

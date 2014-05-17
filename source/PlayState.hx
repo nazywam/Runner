@@ -81,14 +81,15 @@ class PlayState extends FlxState {
 		if (actor.isTouching(FlxObject.CEILING)) {
 			actor.die();
 			player.velocity.y = -200;
+		} else {
+			player.die();
 		}
 	}
 	override public function update() {
 		super.update();
 		
 		//FlxG.camera.angle += 0.1;
-		
-		//FlxG.camera.scroll.x +=1;
+		FlxG.camera.scroll.x +=1;
 		
 		FlxG.collide(player, map);
 		FlxG.collide(player, bonuses, hitBox);
