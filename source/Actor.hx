@@ -12,8 +12,9 @@ class Actor extends FlxSprite {
 	
 	public function new(x : Float, y : Float) {
 		super(x, y);
-		seen = true;
-		speed = 30;
+		seen = false;
+		speed = -30;
+		acceleration.y = 750;
 	}
 	override public function update() {
 		if (seen) {
@@ -22,7 +23,10 @@ class Actor extends FlxSprite {
 		}
 	}
 	public function die() {
-		
+		immovable = true;
+		solid = false;
+		width = 0;
+		height = 0;
 	}
 	
 }

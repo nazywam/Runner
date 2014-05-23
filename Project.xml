@@ -38,6 +38,7 @@
 	<!--------------------------------LIBRARIES------------------------------------->
 
 	<haxelib name="flixel"/>
+	<haxelib name="flixel-addons"/>
 	<haxelib name="openfl"/>
 	
 	<!--In case you want to use the addons package-->

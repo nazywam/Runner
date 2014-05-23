@@ -23,6 +23,11 @@ class Player extends FlxSprite {
 		animation.play("runRight");
 		turnedRight = true;
 		
+		width = 12;
+		height = 14;
+		offset.x = 2; 
+		offset.y = 2;
+		
 		speed = 70;
 		drag.x = 750;
 		acceleration.y = 750;
@@ -56,7 +61,7 @@ class Player extends FlxSprite {
 			if (turnedRight) animation.play("runRight");
 			else animation.play("runLeft");
 		}
-		velocity.x = speed;
+		//velocity.x = speed;
 		super.update();
 	}
 	public function die() {
